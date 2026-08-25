@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Twilightghost/novacart-ai#readme",
   "dependencies": {
+    "@google/genai": "^2.18.0",
     "mongoose": "^9.9.3"
   }
 }

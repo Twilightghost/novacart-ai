@@ -11,6 +11,7 @@ const productSchema = new mongoose.Schema(
     brand: { type: String, default: 'NovaCart' },
     ratingAverage: { type: Number, default: 0 },
     ratingCount: { type: Number, default: 0 },
+    embedding: { type: [Number], default: [] },
   },
   { timestamps: true }
 );
