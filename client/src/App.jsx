@@ -1,20 +1,21 @@
-import { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { CartProvider } from './context/CartContext';
+import ProductListing from './pages/ProductListing';
+import ProductDetail from './pages/ProductDetail';
+import Cart from './pages/Cart';
 
 function App() {
-  const [status, setStatus] = useState('Checking backend...')
-
-  useEffect(() => {
-    fetch('http://localhost:5000/api/health')
-      .then((res) => res.json())
-      .then((data) => setStatus(data.message))
-      .catch(() => setStatus('Could not reach backend ❌'))
-  }, [])
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <h1 className="text-3xl font-bold text-white">{status}</h1>
-    </div>
-  )
+    <CartProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<ProductListing />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+        </Routes>
+      </BrowserRouter>
+    </CartProvider>
+  );
 }
 
-export default App
+export default App;
