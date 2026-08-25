@@ -23,7 +23,9 @@
   },
   "homepage": "https://github.com/Twilightghost/novacart-ai#readme",
   "dependencies": {
+    "@chroma-core/default-embed": "^0.1.9",
     "@google/genai": "^2.18.0",
+    "chromadb": "^3.5.0",
     "mongoose": "^9.9.3"
   }
 }
