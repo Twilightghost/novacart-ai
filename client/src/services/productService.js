@@ -12,3 +12,8 @@ export const fetchProductById = async (id) => {
   if (!res.ok) throw new Error('Failed to fetch product');
   return res.json();
 };
+export const searchProducts = async (query) => {
+  const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`);
+  if (!res.ok) throw new Error('Search failed');
+  return res.json();
+};

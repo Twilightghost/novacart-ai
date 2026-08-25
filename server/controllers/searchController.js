@@ -1,6 +1,8 @@
 import { semanticSearch } from '../../ai-services/retrieval/semanticSearch.js';
 import Product from '../models/Product.js';
 
+const DISTANCE_THRESHOLD = 0.85;
+
 export const searchProducts = async (req, res) => {
   try {
     const { q } = req.query;
@@ -9,7 +11,9 @@ export const searchProducts = async (req, res) => {
     }
 
     const results = await semanticSearch(q, 10);
-    const productIds = results.map((r) => r.productId);
+    console.log(results.map((r) => ({ title: r.title, distance: r.distance })));
+    const relevant = results.filter((r) => r.distance <= DISTANCE_THRESHOLD);
+    const productIds = relevant.map((r) => r.productId);
 
     const products = await Product.find({ _id: { $in: productIds } }).select('-embedding');
 
