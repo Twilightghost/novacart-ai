@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import productRoutes from './routes/productRoutes.js';
+import searchRoutes from './routes/searchRoutes.js';
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/products', productRoutes);
+app.use('/api/search', searchRoutes);
 
 export default app;
