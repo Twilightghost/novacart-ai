@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchProductById } from '../services/productService';
 import { useCart } from '../context/CartContext';
+import ProductCard from '../components/ProductCard';
 
 function ProductDetail() {
   const { id } = useParams();
@@ -31,6 +32,7 @@ function ProductDetail() {
         <Link to="/" className="text-blue-400 text-sm">&larr; Back to products</Link>
         <Link to="/cart" className="text-white text-sm">Cart ({cartCount})</Link>
       </div>
+
       <div className="max-w-2xl mx-auto mt-6 bg-gray-800 rounded-lg p-6">
         <div className="bg-gray-700 rounded-md h-64 flex items-center justify-center text-gray-500 mb-4">
           No image
@@ -47,6 +49,28 @@ function ProductDetail() {
           Add to Cart
         </button>
       </div>
+
+      {product.similarProducts && product.similarProducts.length > 0 && (
+        <div className="max-w-4xl mx-auto mt-10">
+          <h2 className="text-white text-lg font-semibold mb-4">You might also like</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            {product.similarProducts.map((p) => (
+              <ProductCard key={p._id} product={p} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {product.frequentlyBoughtTogether && product.frequentlyBoughtTogether.length > 0 && (
+        <div className="max-w-4xl mx-auto mt-10 mb-10">
+          <h2 className="text-white text-lg font-semibold mb-4">Frequently bought together</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            {product.frequentlyBoughtTogether.map((p) => (
+              <ProductCard key={p._id} product={p} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

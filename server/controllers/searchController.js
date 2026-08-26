@@ -1,4 +1,6 @@
 import { semanticSearch } from '../../ai-services/retrieval/semanticSearch.js';
+import { keywordSearch } from '../../ai-services/retrieval/keywordSearch.js';
+import { reciprocalRankFusion } from '../../ai-services/retrieval/rrf.js';
 import Product from '../models/Product.js';
 
 const DISTANCE_THRESHOLD = 0.85;
@@ -10,10 +12,18 @@ export const searchProducts = async (req, res) => {
       return res.status(400).json({ message: 'Search query is required' });
     }
 
-    const results = await semanticSearch(q, 10);
-    console.log(results.map((r) => ({ title: r.title, distance: r.distance })));
-    const relevant = results.filter((r) => r.distance <= DISTANCE_THRESHOLD);
-    const productIds = relevant.map((r) => r.productId);
+    const semanticResults = await semanticSearch(q, 10);
+    const relevantSemantic = semanticResults.filter((r) => r.distance <= DISTANCE_THRESHOLD);
+
+    let keywordResults = [];
+    try {
+      keywordResults = await keywordSearch(q, 10);
+    } catch {
+      keywordResults = [];
+    }
+
+    const fused = reciprocalRankFusion([relevantSemantic, keywordResults]);
+    const productIds = fused.map((f) => f.productId);
 
     const products = await Product.find({ _id: { $in: productIds } }).select('-embedding');
 
