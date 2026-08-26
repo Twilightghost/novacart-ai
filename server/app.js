@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import productRoutes from './routes/productRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
+import interactionRoutes from './routes/interactionRoutes.js';
 
 const app = express();
 
@@ -14,5 +15,6 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/products', productRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/interactions', interactionRoutes);
 
 export default app;
