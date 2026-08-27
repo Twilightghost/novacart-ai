@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { fetchProducts, searchProducts } from '../services/productService';
 import ProductCard from '../components/ProductCard';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 function ProductListing() {
   const [products, setProducts] = useState([]);
@@ -11,6 +12,7 @@ function ProductListing() {
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const { cartCount } = useCart();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     fetchProducts()
@@ -54,7 +56,17 @@ function ProductListing() {
     <div className="min-h-screen bg-gray-900 p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-white">NovaCart AI — Products</h1>
-        <Link to="/cart" className="text-white text-sm">Cart ({cartCount})</Link>
+        <div className="flex items-center gap-4">
+          {user ? (
+            <>
+              <span className="text-gray-400 text-sm">{user.email}</span>
+              <button onClick={logout} className="text-red-400 text-sm">Log out</button>
+            </>
+          ) : (
+            <Link to="/login" className="text-blue-400 text-sm">Log in</Link>
+          )}
+          <Link to="/cart" className="text-white text-sm">Cart ({cartCount})</Link>
+        </div>
       </div>
 
       <form onSubmit={handleSearch} className="flex gap-2 mb-6">
