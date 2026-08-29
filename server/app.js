@@ -3,6 +3,7 @@ import cors from 'cors';
 import productRoutes from './routes/productRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
 import interactionRoutes from './routes/interactionRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.get('/api/health', (req, res) => {
 app.use('/api/products', productRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/interactions', interactionRoutes);
+app.use('/api/users', userRoutes);
 
 export default app;
