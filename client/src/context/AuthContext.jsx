@@ -6,16 +6,31 @@ import {
   signOut,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import { syncUserToBackend } from '../services/userService';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [dbUser, setDbUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+
+      if (currentUser) {
+        try {
+          const idToken = await currentUser.getIdToken();
+          const syncedUser = await syncUserToBackend(idToken);
+          setDbUser(syncedUser);
+        } catch (error) {
+          console.error('Failed to sync user:', error.message);
+        }
+      } else {
+        setDbUser(null);
+      }
+
       setLoading(false);
     });
     return unsubscribe;
@@ -26,7 +41,7 @@ export function AuthProvider({ children }) {
   const logout = () => signOut(auth);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, dbUser, loading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
