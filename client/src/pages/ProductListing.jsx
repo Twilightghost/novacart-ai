@@ -76,6 +76,7 @@ function ProductListing() {
           ) : (
             <Link to="/login" className="text-blue-400 text-sm">Log in</Link>
           )}
+          <Link to="/assistant" className="text-purple-400 text-sm">AI Assistant</Link>
           <Link to="/cart" className="text-white text-sm">Cart ({cartCount})</Link>
         </div>
       </div>
