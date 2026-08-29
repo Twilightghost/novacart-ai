@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchProductById } from '../services/productService';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { logInteraction } from '../services/interactionService';
 import ProductCard from '../components/ProductCard';
 
 function ProductDetail() {
@@ -10,18 +12,22 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { addToCart, cartCount } = useCart();
+  const { dbUser } = useAuth();
 
   useEffect(() => {
     fetchProductById(id)
       .then((data) => {
         setProduct(data);
         setLoading(false);
+        if (dbUser) {
+          logInteraction(dbUser._id, id, 'view');
+        }
       })
       .catch((err) => {
         setError(err.message);
         setLoading(false);
       });
-  }, [id]);
+  }, [id, dbUser]);
 
   if (loading) return <p className="text-white text-center mt-10">Loading product...</p>;
   if (error) return <p className="text-red-400 text-center mt-10">Error: {error}</p>;
@@ -43,7 +49,12 @@ function ProductDetail() {
         <p className="text-gray-300 mt-4">{product.description}</p>
         <p className="text-gray-500 text-sm mt-4">{product.stock} in stock</p>
         <button
-          onClick={() => addToCart(product)}
+          onClick={() => {
+            addToCart(product);
+            if (dbUser) {
+              logInteraction(dbUser._id, product._id, 'add_to_cart');
+            }
+          }}
           className="mt-6 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-md"
         >
           Add to Cart

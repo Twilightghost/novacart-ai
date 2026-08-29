@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchProducts, searchProducts } from '../services/productService';
+import { fetchProducts, searchProducts, fetchRecommendations } from '../services/productService';
 import ProductCard from '../components/ProductCard';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
 function ProductListing() {
   const [products, setProducts] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const { cartCount } = useCart();
-  const { user, logout } = useAuth();
+  const { user, dbUser, logout } = useAuth();
 
   useEffect(() => {
     fetchProducts()
@@ -25,6 +26,16 @@ function ProductListing() {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    if (dbUser) {
+      fetchRecommendations(dbUser._id)
+        .then(setRecommendations)
+        .catch(() => setRecommendations([]));
+    } else {
+      setRecommendations([]);
+    }
+  }, [dbUser]);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -97,6 +108,18 @@ function ProductListing() {
 
       {error && <p className="text-red-400 mb-4">Error: {error}</p>}
 
+      {recommendations.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-white text-lg font-semibold mb-4">Recommended for you</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {recommendations.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <h2 className="text-white text-lg font-semibold mb-4">All Products</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {products.map((product) => (
           <ProductCard key={product._id} product={product} />

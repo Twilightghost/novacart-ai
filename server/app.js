@@ -4,6 +4,7 @@ import productRoutes from './routes/productRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
 import interactionRoutes from './routes/interactionRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import recommendationRoutes from './routes/recommendationRoutes.js';
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.use('/api/products', productRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/interactions', interactionRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 
 export default app;

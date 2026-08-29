@@ -17,3 +17,8 @@ export const searchProducts = async (query) => {
   if (!res.ok) throw new Error('Search failed');
   return res.json();
 };
+export const fetchRecommendations = async (userId) => {
+  const res = await fetch(`${API_BASE}/recommendations/${userId}`);
+  if (!res.ok) throw new Error('Failed to fetch recommendations');
+  return res.json();
+};
