@@ -12,8 +12,17 @@ const productSchema = new mongoose.Schema(
     ratingAverage: { type: Number, default: 0 },
     ratingCount: { type: Number, default: 0 },
     embedding: { type: [Number], default: [] },
+    reviewAnalysis: {
+      sentiment: { type: String, enum: ['positive', 'mixed', 'negative', null], default: null },
+      summary: { type: String, default: '' },
+      pros: { type: [String], default: [] },
+      cons: { type: [String], default: [] },
+      analyzedAt: { type: Date, default: null },
+    },
   },
   { timestamps: true }
 );
+
 productSchema.index({ title: 'text', description: 'text', category: 'text' });
+
 export default mongoose.model('Product', productSchema);

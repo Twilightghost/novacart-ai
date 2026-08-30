@@ -59,6 +59,46 @@ function ProductDetail() {
         >
           Add to Cart
         </button>
+
+        {product.reviewAnalysis && product.reviewAnalysis.analyzedAt && (
+          <div className="mt-6 pt-6 border-t border-gray-700">
+            <div className="flex items-center gap-2 mb-2">
+              <h3 className="text-white font-semibold">Customer sentiment:</h3>
+              <span
+                className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                  product.reviewAnalysis.sentiment === 'positive'
+                    ? 'bg-green-900 text-green-300'
+                    : product.reviewAnalysis.sentiment === 'negative'
+                    ? 'bg-red-900 text-red-300'
+                    : 'bg-yellow-900 text-yellow-300'
+                }`}
+              >
+                {product.reviewAnalysis.sentiment}
+              </span>
+            </div>
+            <p className="text-gray-300 text-sm mb-3">{product.reviewAnalysis.summary}</p>
+            {product.reviewAnalysis.pros.length > 0 && (
+              <div className="mb-2">
+                <p className="text-green-400 text-sm font-semibold mb-1">Pros:</p>
+                <ul className="text-gray-300 text-sm list-disc list-inside">
+                  {product.reviewAnalysis.pros.map((pro, i) => (
+                    <li key={i}>{pro}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {product.reviewAnalysis.cons.length > 0 && (
+              <div>
+                <p className="text-red-400 text-sm font-semibold mb-1">Cons:</p>
+                <ul className="text-gray-300 text-sm list-disc list-inside">
+                  {product.reviewAnalysis.cons.map((con, i) => (
+                    <li key={i}>{con}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {product.similarProducts && product.similarProducts.length > 0 && (
