@@ -25,7 +25,13 @@ This document reports actual measured results from evaluating NovaCart AI's sear
 - Domain restriction: asked "what's the capital of France?" — assistant correctly declined and redirected to shopping topics.
 - Grounding: asked "what laptop is good for programming?" — assistant recommended PixelBook Pro 14 Laptop by exact name and price (₹68999), matching the real product record, with `sources` citing the actual product ID used.
 
-**Not yet measured:** a formal 20-question groundedness/hallucination scoring pass (planned, not yet run — see Future Improvements).
+### RAG Guardrail Test Suite
+
+**Method:** 6 automated test cases in `scripts/evaluation/testRagGuardrails.js`, each checking a specific guardrail property (domain restriction, grounding, no-fabrication, graceful fallback, no fake personal data, price accuracy) using pattern-matching on the assistant's actual response.
+
+**Result: 6/6 tests passing.**
+
+**A limitation worth noting (and a real bug we caught):** the initial version of the "no fabricated products" test flagged a false failure — the assistant correctly responded "we do not have any flying cars available," but the test naively checked only for the substring "flying car" appearing in the response, without distinguishing negation ("we don't have X") from confirmation ("we do have X"). The assistant's behavior was correct throughout; the test logic was fixed to check for negation patterns near availability language. This highlights a broader limitation of keyword-based guardrail testing: it can produce false positives and negatives, and a more rigorous approach would use a second LLM call as a semantic "judge" rather than pattern matching — a natural next step for this evaluation suite.
 
 ## Recommendation Systems
 
@@ -35,8 +41,15 @@ This document reports actual measured results from evaluating NovaCart AI's sear
 
 **Not yet measured:** formal Hit Rate@5 / Precision@K against a held-out test set (see Future Improvements).
 
+## Review Intelligence
+
+**Method:** 16 seeded reviews across 5 products, batch-processed once via Gemini with structured JSON output (schema-constrained: sentiment, summary, pros, cons), cached in MongoDB rather than recomputed per page view.
+
+**Result:** sentiment correctly reflected review content — e.g., AeroFlex Running Shoes (containing one negative review about sole durability among mostly positive reviews) was correctly classified as "mixed" rather than "positive," with the specific durability complaint surfaced in the cons list.
+
 ## Future Improvements to This Evaluation
 
 - Expand the search test set beyond 8 queries, including more queries deliberately designed to have zero keyword overlap with relevant products, to better isolate semantic search's contribution.
-- Run a formal ~20-question RAG evaluation scoring correctness, groundedness, and hallucination rate.
+- Replace keyword-based guardrail testing with an LLM-as-judge approach for more semantically robust pass/fail detection.
+- Run a formal ~20-question RAG evaluation scoring correctness, groundedness, and hallucination rate on a larger, more diverse question set.
 - Compute Hit Rate@5 for personalized recommendations using held-out interaction data.
