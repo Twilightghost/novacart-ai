@@ -27,6 +27,7 @@
     "@google/genai": "^2.18.0",
     "chromadb": "^3.5.0",
     "firebase-admin": "^14.3.0",
-    "mongoose": "^9.9.3"
+    "mongoose": "^9.9.3",
+    "stripe": "^22.6.0"
   }
 }
